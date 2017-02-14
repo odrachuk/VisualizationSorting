@@ -13,7 +13,7 @@ class HomeActivityPresenter(private var view: HomeActivityPresenter.View?) : Act
     private var subscriptions = CompositeSubscription()
 
     interface View {
-        fun onSortStarted()
+        fun onSortStarted(size: Int)
         fun onSortFinished(digits: IntArray)
     }
 
@@ -37,7 +37,7 @@ class HomeActivityPresenter(private var view: HomeActivityPresenter.View?) : Act
     private fun addSubscription(subscription: Subscription?) = subscription?.let { subscriptions.add(it) }
 
     fun startSort(inputArray: Array<String>) {
-        view?.onSortStarted()
+        view?.onSortStarted(inputArray.size)
         unSubscribe()
         addSubscription(Observable.just(inputArray.map(String::toInt).toIntArray())
                 .map { it -> QuickSort().sort(it) }

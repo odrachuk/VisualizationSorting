@@ -43,17 +43,21 @@
                 android:scrollbars="horizontal"
                 android:text="@string/start"/>
 
-            <FrameLayout
+            <LinearLayout
+                android:id="@+id/act_home__chart"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/act_home__start_btn">
+                android:layout_below="@id/act_home__start_btn"
+                android:orientation="horizontal"
+                android:padding="@dimen/act_home__frame_padding"/>
 
-                <com.softsandr.sortvisual.ui.opengl.CustomGlSurfaceView
-                    android:id="@+id/act_home__gl_surface"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+            <!--<com.softsandr.sortvisual.ui.opengl.CustomGlSurfaceView
+                android:id="@+id/act_home__gl_surface"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"/>
 
-            </FrameLayout>
+        </LinearLayout>-->
 
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
