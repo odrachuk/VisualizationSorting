@@ -43,6 +43,18 @@
                 android:scrollbars="horizontal"
                 android:text="@string/start"/>
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/act_home__start_btn">
+
+                <com.softsandr.sortvisual.ui.opengl.CustomGlSurfaceView
+                    android:id="@+id/act_home__gl_surface"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </FrameLayout>
+
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
 
