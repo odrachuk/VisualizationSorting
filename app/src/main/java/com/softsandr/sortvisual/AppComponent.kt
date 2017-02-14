@@ -18,7 +18,12 @@ interface AppComponent {
     fun inject(app: App): App
 
     @Module
-    class AppModule {
+    class AppModule(val ctx: Context) {
+
+        @Provides
+        @ApplicationScope
+        internal fun provideContext(): Context = ctx
+
         @Provides
         @ApplicationScope
         internal fun providePreferenceController(ctx: Context): PreferenceController =

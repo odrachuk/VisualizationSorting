@@ -2,27 +2,18 @@ package com.softsandr.sortvisual.ui.home;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 
 import com.softsandr.sortvisual.R;
 import com.softsandr.sortvisual.di.activity.ActivityComponentBuilderHolder;
 import com.softsandr.sortvisual.di.activity.BaseActivity;
-import com.softsandr.sortvisual.di.fragment.FragmentComponentBuilder;
-import com.softsandr.sortvisual.di.fragment.FragmentComponentBuilderHolder;
-
-import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-public class HomeActivity extends BaseActivity implements FragmentComponentBuilderHolder {
+public class HomeActivity extends BaseActivity {
 
     @Inject
     HomeActivityPresenter activityPresenter;
-
-    @Inject
-    Map<Class<? extends Fragment>, Provider<FragmentComponentBuilder>> fragmentComponentBuilders;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +29,6 @@ public class HomeActivity extends BaseActivity implements FragmentComponentBuild
                 .activityModule(new HomeActivityComponent.HomeActivityModule(this))
                 .build()
                 .injectMembers(this);
-    }
-
-    @Override
-    @SuppressWarnings("ConstantConditions")
-    public FragmentComponentBuilder getFragmentComponentBuilder(@NonNull Class<? extends Fragment> fragmentClass) {
-        return fragmentComponentBuilders.get(fragmentClass).get();
     }
 
     private void initView() {

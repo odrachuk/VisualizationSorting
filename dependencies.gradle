@@ -8,9 +8,7 @@ allprojects {
     configurations.all {
         resolutionStrategy {
             failOnVersionConflict()
-            force appDependencies.supportSupport_v4,
-                    appDependencies.supportAppCompat_v7,
-                    appDependencies.rxjava
+            force appDependencies.rxjava
         }
     }
 }

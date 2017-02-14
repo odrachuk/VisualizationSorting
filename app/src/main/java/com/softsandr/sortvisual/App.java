@@ -26,7 +26,7 @@ public class App extends Application implements ActivityComponentBuilderHolder {
     @Override
     public void onCreate() {
         super.onCreate();
-        DaggerAppComponent.create().inject(this);
+        DaggerAppComponent.builder().appModule(new AppComponent.AppModule(this)).build().inject(this);
         Timber.plant(logTree);
     }
 
