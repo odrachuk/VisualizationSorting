@@ -9,7 +9,7 @@
 -keepattributes *Annotation*,EnclosingMethod,Signature
 
 -keepclassmembers,allowoptimization enum * {
-    public static **[] values();
+    public static **[] array();
     public static ** valueOf(java.lang.String);
 }
 

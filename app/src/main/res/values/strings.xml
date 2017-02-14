@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Visualization of Sorting</string>
+    <string name="app_name">Quick Sort Algorithm</string>
+    <string name="start">Start</string>
 </resources>
