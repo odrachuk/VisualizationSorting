@@ -11,7 +11,7 @@
     <color name="colorOrange">#ec995c</color>
     <color name="colorWhiteTransparent">#8cffffff</color>
     <color name="colorBlackTransparent">#8c000000</color>
-    <color name="colorScreenBackground">#edf0f5</color>
+    <color name="colorScreenBackground">#b9d2fc</color>
     <color name="colorProgressStart">#031250</color>
     <color name="colorProgressCenter">#065697</color>
     <color name="colorProgressEnd">#0775b7</color>

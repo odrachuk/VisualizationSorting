@@ -1,41 +1,44 @@
 <resources>
 
-    <style name="AppTheme.FullScreen" parent="Theme.AppCompat">
-        <item name="android:windowFullscreen">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.FullScreen.Transparent" parent="AppTheme.FullScreen">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation</item>
-    </style>
-
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:textColorPrimary">@color/colorTextPrimary</item>
         <item name="android:windowBackground">@color/colorScreenBackground</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="alertDialogTheme">@style/AppTheme.AlertDialog</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
     </style>
 
-    <style name="AppTheme" parent="AppTheme.Base" />
+    <style name="AppTheme" parent="AppTheme.Base"/>
 
-    <style name="AppTheme.Toolbar" parent="Base.Widget.AppCompat.Toolbar">
+    <style name="AppTheme.ToolbarBase" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="android:background">@color/colorPrimary</item>
         <item name="android:minHeight">?attr/actionBarSize</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
-        <item name="popupTheme">@style/AppTheme.Toolbar.Popup</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="layout_scrollFlags">enterAlways</item>
+        <item name="titleTextAppearance">@style/AppTheme.Toolbar.TitleText</item>
     </style>
 
-    <style name="AppTheme.Toolbar.Popup" parent="Base.ThemeOverlay.AppCompat.Dark">
-        <item name="android:popupBackground">@color/colorPrimary</item>
-        <item name="android:textColor">@android:color/white</item>
+    <style name="AppTheme.Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
+
+    <style name="AppTheme.Toolbar" parent="AppTheme.ToolbarBase"/>
+
+    <style name="AppTheme.ToolbarWithBackBtn" parent="AppTheme.ToolbarBase">
+        <item name="contentInsetStartWithNavigation">0dp</item>
+        <item name="contentInsetStart">0dp</item>
+        <item name="contentInsetLeft">0dp</item>
+        <item name="titleMargin">0dp</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
     <style name="AppTheme.AlertDialog" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:windowTitleStyle">@style/AppTheme.AlertDialog.Title</item>

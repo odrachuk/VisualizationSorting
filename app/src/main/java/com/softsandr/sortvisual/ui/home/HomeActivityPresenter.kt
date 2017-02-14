@@ -1,8 +1,12 @@
 package com.softsandr.sortvisual.ui.home
 
-import com.softsandr.sortvisual.di.ActivityScope
+class HomeActivityPresenter(private val view: HomeActivityPresenter.View) {
 
-import javax.inject.Inject
+    interface View {
+        fun onSortFinished()
+    }
 
-@ActivityScope
-class HomeActivityPresenter @Inject constructor(private val activity: HomeActivity)
+    fun startSort() {
+        view.onSortFinished()
+    }
+}
