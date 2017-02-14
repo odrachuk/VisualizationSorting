@@ -2,8 +2,10 @@ package com.softsandr.sortvisual.ui.home;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.softsandr.sortvisual.R;
@@ -22,8 +24,6 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
 
     @Inject
     HomeActivityPresenter presenter;
-
-    private int[] inputArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +52,38 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        presenter.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        presenter.onPause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        presenter.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onSortStarted() {
+        hideSoftKeyboard(findViewById(R.id.act_home__array_et));
+    }
 
     @Override
     public void onSortFinished(@NotNull int[] digits) {
         Timber.d(Arrays.toString(digits));
+    }
+
+    private void hideSoftKeyboard(View target) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(target.getWindowToken(), 0);
+        }
     }
 }
