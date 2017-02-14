@@ -1,0 +1,49 @@
+ext {
+    appConfig = [
+            appApplicationId        : 'com.softsandr.sortvisual',
+            appAndroidVersionCode   : 1,
+            appAndroidVersionName   : "1.0.0",
+            androidMinSdkVersion    : 16,
+            androidTargetSdkVersion : 25,
+            androidBuildToolVersion : "25.0.2",
+            androidCompileSdkVersion: 25
+    ]
+}
+
+subprojects {
+    afterEvaluate {project ->
+        if (project.hasProperty("android")) {
+            android {
+                def appConfig = rootProject.ext.appConfig
+                compileSdkVersion appConfig.androidCompileSdkVersion
+                buildToolsVersion appConfig.androidBuildToolVersion
+                defaultConfig {
+                    minSdkVersion appConfig.androidMinSdkVersion
+                    targetSdkVersion appConfig.androidTargetSdkVersion
+                }
+
+                packagingOptions {
+                    exclude 'LICENSE.txt'
+                    exclude '.readme'
+                    exclude 'jsr305_annotations/Jsr305_annotations.gwt.xml'
+                }
+
+                testOptions.unitTests.all {
+                    testLogging {
+                        events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+                    }
+                    maxParallelForks 4
+                    maxHeapSize "2048m"
+                }
+
+                dexOptions {
+                    javaMaxHeapSize "4g"
+                }
+
+                lintOptions {
+                    disable 'InvalidPackage'
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,122 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.github.ben-manes.versions'
+apply from: rootProject.file('jacoco.gradle')
+
+android {
+    def appConfig = rootProject.ext.appConfig
+    int minSdk = hasProperty('minSdk') ? minSdk.toInteger() : appConfig.androidMinSdkVersion
+
+    defaultConfig {
+        minSdkVersion minSdk
+        applicationId appConfig.appApplicationId
+        versionCode appConfig.appAndroidVersionCode
+        versionName appConfig.appAndroidVersionName
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+        test {
+            java.srcDir file('src/unitTest/java')
+        }
+        androidTest.setRoot('src/androidTest')
+    }
+
+    productFlavors {
+        google {
+            versionName appConfig.appAndroidVersionName
+            buildConfigField "com.softsandr.sortvisual.Flavor", "flavor", "com.softsandr.prj1.Flavor.GOOGLE"
+        }
+    }
+
+    Properties signingProps = new Properties()
+    signingProps.load(new FileInputStream(file(project.property("project.signing.properties"))))
+
+    signingConfigs {
+        release {
+            storeFile file(signingProps['keystore'])
+            storePassword signingProps['keystore.password']
+            keyAlias signingProps['keyAlias']
+            keyPassword signingProps['keyPassword']
+        }
+    }
+
+    buildTypes {
+
+        release {
+            minifyEnabled true
+            multiDexEnabled false
+            signingConfig signingConfigs.release
+            proguardFiles fileTree(dir: 'proguard', include: '**/*.pro').asList().toArray()
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+        }
+
+        debug {
+            minifyEnabled false
+            multiDexEnabled false
+            ext.enableCrashlytics = false
+            versionNameSuffix "-debug"
+        }
+
+        develop {
+            initWith debug
+            minifyEnabled false
+            multiDexEnabled true
+            versionNameSuffix "-develop"
+        }
+
+        android.applicationVariants.all { variant ->
+            def apkName = "SortVisual" + "-" + variant.productFlavors[0].name
+
+            if (variant.buildType.name == "release") {
+                apkName += "-release.apk";
+            } else if (variant.buildType.name == "develop") {
+                apkName += "-develop.apk";
+            } else {
+                apkName += "-debug.apk";
+            }
+            variant.outputs[0].outputFile = file("$project.buildDir/apk/" + apkName)
+        }
+    }
+}
+
+configurations {
+    developCompile
+}
+
+kapt {
+    generateStubs = true
+}
+
+dependencies {
+    compile kotlin_stdlib
+
+    def appDependencies = rootProject.ext.appDependencies
+    def testDependencies = rootProject.ext.testDependencies
+
+    kapt appDependencies.daggerCompiler
+    compile appDependencies.dagger
+    annotationProcessor 'javax.annotation:jsr250-api:1.0'
+
+    compile appDependencies.timber
+    compile appDependencies.supportSupport_v4
+    compile appDependencies.supportAppCompat_v7
+    compile appDependencies.supportDesign
+    compile appDependencies.rxjava
+    compile appDependencies.rxandroid
+
+    testCompile testDependencies.junit
+    testCompile testDependencies.mockito
+}

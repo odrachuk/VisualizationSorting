@@ -1,0 +1,52 @@
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+        mavenCentral()
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            failOnVersionConflict()
+            force appDependencies.supportSupport_v4,
+                    appDependencies.supportAppCompat_v7,
+                    appDependencies.rxjava
+        }
+    }
+}
+
+ext {
+    kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    //Android libraries
+    androidSupportLibraryVersion = "25.1.0"
+    playServicesVersion = "10.0.1"
+
+    //Libraries
+    daggerVersion = "2.8"
+    rxJavaVersion = "1.1.6"
+    rxAndroidVersion = "1.2.0"
+    timberVersion = "3.1.0"
+
+    //Testing tools
+    junitVersion = "4.12"
+    mockitoVersion = "2.2.7"
+
+    appDependencies = [
+            supportSupport_v4  : "com.android.support:support-v4:${androidSupportLibraryVersion}",
+            supportAppCompat_v7: "com.android.support:appcompat-v7:${androidSupportLibraryVersion}",
+            supportDesign      : "com.android.support:design:${androidSupportLibraryVersion}",
+            supportAnnotations : "com.android.support:support-annotations:${androidSupportLibraryVersion}",
+            playServicesBase   : "com.google.android.gms:play-services-base:${playServicesVersion}",
+            dagger             : "com.google.dagger:dagger:${daggerVersion}",
+            daggerCompiler     : "com.google.dagger:dagger-compiler:${daggerVersion}",
+            rxjava             : "io.reactivex:rxjava:${rxJavaVersion}",
+            rxandroid          : "io.reactivex:rxandroid:${rxAndroidVersion}",
+            timber             : "com.jakewharton.timber:timber:${timberVersion}",
+    ]
+
+    testDependencies = [
+            junit  : "junit:junit:${junitVersion}",
+            mockito: "org.mockito:mockito-core:${mockitoVersion}"
+    ]
+}

@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="act_splash__tv_text_size">32sp</dimen>
+    <dimen name="list_item_selection_img_size">40dp</dimen>
+</resources>
