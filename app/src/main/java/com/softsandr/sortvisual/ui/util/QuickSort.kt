@@ -1,20 +1,26 @@
 package com.softsandr.sortvisual.ui.util
 
+import rx.Observable
+import rx.Subscriber
+import java.util.concurrent.TimeUnit
+
 /**
  * @author Aleksander Drachuk (adrachuk@viewster.com)
  */
 
 class QuickSort {
 
-    fun sort(array: IntArray): IntArray {
-        if (array.isEmpty()) {
-            return array
+    var step: Int = 0
+
+    fun sort(array: IntArray?): Observable<IntArray> {
+        if (array == null || array.isEmpty()) {
+            return Observable.error(IllegalArgumentException("Input Array is not specified!"))
         }
-        quickSort(0, array.size - 1, array)
-        return array
+        return Observable.create<IntArray> { subscriber -> quickSort(0, array.size - 1, array, subscriber) }
     }
 
-    private fun quickSort(low: Int, high: Int, array: IntArray) {
+    private fun quickSort(low: Int, high: Int, array: IntArray, subscriber: Subscriber<in IntArray>) {
+        step++
         var i = low
         var j = high
         val pivot = array[low + (high - low) / 2]
@@ -30,13 +36,31 @@ class QuickSort {
                 exchange(i, j, array)
                 i++
                 j--
+                if (!subscriber.isUnsubscribed) {
+                    subscriber.onNext(array.clone())
+                }
             }
         }
-        if (low < j) {
-            quickSort(low, j, array)
+
+        try {
+            TimeUnit.MILLISECONDS.sleep(ANIMATION_DURATION_MILLIS)
+        } catch (e: InterruptedException) {
+            if (!subscriber.isUnsubscribed) {
+                subscriber.onError(e)
+            }
         }
+
+        if (low < j) {
+            quickSort(low, j, array, subscriber)
+        }
+
         if (i < high) {
-            quickSort(i, high, array)
+            quickSort(i, high, array, subscriber)
+        }
+        if (--step == 0) {
+            if (!subscriber.isUnsubscribed) {
+                subscriber.onCompleted()
+            }
         }
     }
 
@@ -44,5 +68,9 @@ class QuickSort {
         val tmp = array[i]
         array[i] = array[j]
         array[j] = tmp
+    }
+
+    companion object {
+        val ANIMATION_DURATION_MILLIS = 1000L
     }
 }

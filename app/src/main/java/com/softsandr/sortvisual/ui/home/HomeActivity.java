@@ -17,6 +17,7 @@ import com.softsandr.sortvisual.di.activity.ActivityComponentBuilderHolder;
 import com.softsandr.sortvisual.di.activity.BaseActivity;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -27,11 +28,14 @@ import timber.log.Timber;
 
 public class HomeActivity extends BaseActivity implements HomeActivityPresenter.View {
 
+    public static final int DEF_MAXIMUM_VAL = 1000;
+
     @Inject
     HomeActivityPresenter presenter;
 
     private LinearLayout chart;
     private int chartPadding, chartBarMrg, chartBarWidth;
+    private Integer maxUserVal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +58,21 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
         chart = (LinearLayout) findViewById(R.id.act_home__chart);
         chartPadding = getResources().getDimensionPixelSize(R.dimen.act_home__frame_padding);
         chartBarMrg = getResources().getDimensionPixelSize(R.dimen.act_home__bar_margin_right);
-        final TextView inputTv = (TextView) findViewById(R.id.act_home__array_et);
+        final TextView inputTv = (TextView) findViewById(R.id.act_home__input);
         findViewById(R.id.act_home__start_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    maxUserVal = Integer.parseInt(((TextView) findViewById(R.id.act_home__max)).getText().toString());
+                } catch (NumberFormatException ignored) {
+                }
                 presenter.startSort(inputTv.getText().toString().trim().split("\\s+"));
+            }
+        });
+        findViewById(R.id.act_home__stop_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.stopSort();
             }
         });
     }
@@ -83,8 +97,31 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
 
     @Override
     public void onSortStarted(int size) {
-        hideSoftKeyboard(findViewById(R.id.act_home__array_et));
+        hideSoftKeyboard(findViewById(R.id.act_home__input));
         initChart(size);
+    }
+
+    @Override
+    public void onSortStep(@NotNull int[] digits) {
+        Timber.d("onSortStep");
+        Timber.d(Arrays.toString(digits));
+        fillChart(digits);
+    }
+
+    @Override
+    public void onSortFinished(@NotNull int[] digits) {
+        Timber.d("onSortFinished");
+        Timber.d(Arrays.toString(digits));
+        fillChart(digits);
+    }
+
+    @Override
+    public void onSortError(@Nullable Throwable th) {
+        chart.removeAllViews();
+        TextView errorTv = (TextView) findViewById(R.id.act_home__error_tv);
+        if (th != null) {
+            errorTv.setText(getString(R.string.error_details, th.getCause()));
+        }
     }
 
     private void initChart(int size) {
@@ -103,26 +140,21 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
         }
     }
 
-    @Override
-    public void onSortFinished(@NotNull int[] digits) {
-        Timber.d(Arrays.toString(digits));
-        fillChart(digits);
-    }
-
     private void fillChart(int[] digits) {
         chart.removeAllViews();
-        int maxValue = digits[digits.length - 1];
         int chartHeight = chart.getMeasuredHeight();
         double heightMultiplier = 1f;
+        int maxValue = maxUserVal != null ? maxUserVal : DEF_MAXIMUM_VAL;
         if (maxValue > chartHeight) {
             heightMultiplier = new BigDecimal((double) maxValue / chartHeight).setScale(0, BigDecimal.ROUND_FLOOR).intValue();
         } else if (maxValue < chartHeight) {
-            heightMultiplier = new BigDecimal((double) chartHeight / maxValue).setScale(0, BigDecimal.ROUND_FLOOR).intValue();
+            heightMultiplier = new BigDecimal((double) chartHeight / maxValue).setScale(0, BigDecimal.ROUND_CEILING).intValue();
         }
         for (int i = 0; i < digits.length; i++) {
             View bar = new View(this);
             bar.setBackground(ContextCompat.getDrawable(this, R.drawable.initial_bar));
-            LinearLayout.LayoutParams barInitialLp = new LinearLayout.LayoutParams(chartBarWidth, (int) (digits[i] * heightMultiplier));
+            LinearLayout.LayoutParams barInitialLp = new LinearLayout.LayoutParams(chartBarWidth,
+                    (maxValue > chartHeight) ? (int) (digits[i] / heightMultiplier) : (int) (digits[i] * heightMultiplier));
             barInitialLp.gravity = Gravity.BOTTOM;
             if (i != digits.length - 1) {
                 barInitialLp.rightMargin = chartBarMrg;

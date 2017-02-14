@@ -27,37 +27,86 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/act_home__array_et"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/act_home__input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/act_home__input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/please_type_your_array_here"
+                    android:inputType="numberDecimal|text"
+                    android:textColor="@color/colorPrimary"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/act_home__btn_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal|text"
-                android:textColor="@color/colorPrimary"/>
+                android:layout_below="@id/act_home__input_layout"
+                android:weightSum="1">
 
-            <Button
-                android:id="@+id/act_home__start_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/act_home__array_et"
-                android:scrollbars="horizontal"
-                android:text="@string/start"/>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/act_home__max_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <EditText
+                        android:id="@+id/act_home__max"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/please_type_maximum"
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/colorPrimary"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:id="@+id/act_home__start_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="horizontal"
+                    android:text="@string/start"/>
+
+                <Button
+                    android:id="@+id/act_home__stop_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="horizontal"
+                    android:text="@string/stop"/>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/act_home__chart"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/act_home__start_btn"
+                android:layout_below="@id/act_home__btn_container"
                 android:orientation="horizontal"
-                android:padding="@dimen/act_home__frame_padding"/>
+                android:padding="@dimen/act_home__frame_padding">
 
-            <!--<com.softsandr.sortvisual.ui.opengl.CustomGlSurfaceView
-                android:id="@+id/act_home__gl_surface"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="invisible"/>
+                <!--<com.softsandr.sortvisual.ui.opengl.CustomGlSurfaceView
+                    android:id="@+id/act_home__gl_surface"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="invisible"/>-->
 
-        </LinearLayout>-->
+                <TextView
+                    android:id="@+id/act_home__error_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/error"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
 
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>

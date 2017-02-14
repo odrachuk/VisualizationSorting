@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Quick Sort Algorithm</string>
     <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="error">Error!</string>
+    <string name="error_details">Error: %1$s</string>
+    <string name="please_type_your_array_here">Please type positive digits separated by a space</string>
+    <string name="please_type_maximum">Maximum Value</string>
 </resources>
