@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.softsandr.sortvisual.R;
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 import timber.log.Timber;
 
 import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 public class HomeActivity extends BaseActivity implements HomeActivityPresenter.View {
@@ -37,6 +39,7 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
     @Inject
     HomeActivityPresenter presenter;
 
+    private ProgressBar progressBar;
     private LinearLayout chart;
     private TextView errorTv;
     private Button stopBtn;
@@ -63,6 +66,7 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
 
     private void initView() {
         setSupportActionBar((Toolbar) findViewById(R.id.act_home__toolbar));
+        progressBar = (ProgressBar) findViewById(R.id.act_home__progress);
         chart = (LinearLayout) findViewById(R.id.act_home__chart);
         chartPadding = getResources().getDimensionPixelSize(R.dimen.act_home__frame_padding);
         chartBarMrg = getResources().getDimensionPixelSize(R.dimen.act_home__bar_margin_right);
@@ -111,6 +115,7 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
     @Override
     public void onSortStarted(int size) {
         Timber.d("onSortStarted");
+        progressBar.setVisibility(VISIBLE);
         hideSoftKeyboard(findViewById(R.id.act_home__input));
         initChart(size);
     }
@@ -126,6 +131,7 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
     public void onSortFinished(@NotNull int[] digits) {
         Timber.d("onSortFinished");
         Timber.d(Arrays.toString(digits));
+        progressBar.setVisibility(INVISIBLE);
         stopBtn.setEnabled(false);
         fillChart(digits);
     }
@@ -133,6 +139,7 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
     @Override
     public void onSortError(@Nullable Throwable th) {
         Timber.d("onSortError: %s", th);
+        progressBar.setVisibility(INVISIBLE);
         chart.removeAllViews();
         chart.setVisibility(GONE);
         errorTv.setVisibility(VISIBLE);
