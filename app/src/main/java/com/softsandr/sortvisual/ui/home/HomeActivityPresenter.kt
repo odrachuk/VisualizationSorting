@@ -38,27 +38,35 @@ class HomeActivityPresenter(private var view: HomeActivityPresenter.View?) : Act
 
     private fun addSubscription(subscription: Subscription?) = subscription?.let { subscriptions.add(it) }
 
-    fun startSort(inputArray: Array<String>) {
-        view?.onSortStarted(inputArray.size)
-        unSubscribe()
-        val input = inputArray.map(String::toInt).toIntArray()
-        addSubscription(QuickSort().sort(input)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Subscriber<IntArray>() {
+    fun startSort(inputArray: Array<String>, animFrequency: Long?) {
+        val input: IntArray? = try {
+            inputArray.map(String::toInt).toIntArray()
+        } catch (e: Exception) {
+            view?.onSortError(IllegalArgumentException("Wrong input data"))
+            null
+        }
 
-                    override fun onNext(t: IntArray?) {
-                        t?.let { view?.onSortStep(t) }
-                    }
+        input?.let {
+            view?.onSortStarted(inputArray.size)
+            unSubscribe()
+            addSubscription(QuickSort(animFrequency).sort(it)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(object : Subscriber<IntArray>() {
 
-                    override fun onError(e: Throwable?) {
-                        view?.onSortError(e)
-                    }
+                        override fun onNext(t: IntArray?) {
+                            t?.let { view?.onSortStep(t) }
+                        }
 
-                    override fun onCompleted() {
-                        view?.onSortFinished(input)
-                    }
-                }))
+                        override fun onError(e: Throwable?) {
+                            view?.onSortError(e)
+                        }
+
+                        override fun onCompleted() {
+                            view?.onSortFinished(it)
+                        }
+                    }))
+        }
     }
 
     fun stopSort() {

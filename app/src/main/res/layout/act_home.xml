@@ -25,7 +25,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp">
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/act_home__input_layout"
@@ -53,7 +54,7 @@
                     android:id="@+id/act_home__max_layout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                    android:layout_weight=".5">
 
                     <EditText
                         android:id="@+id/act_home__max"
@@ -65,19 +66,36 @@
 
                 </android.support.design.widget.TextInputLayout>
 
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/act_home__frequency_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5">
+
+                    <EditText
+                        android:id="@+id/act_home__frequency"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/please_type_frequency"
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/colorPrimary"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:id="@+id/act_home__stop_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:scrollbars="horizontal"
+                    android:text="@string/stop"/>
+
                 <Button
                     android:id="@+id/act_home__start_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scrollbars="horizontal"
                     android:text="@string/start"/>
-
-                <Button
-                    android:id="@+id/act_home__stop_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="horizontal"
-                    android:text="@string/stop"/>
 
             </LinearLayout>
 
@@ -95,18 +113,19 @@
                     android:layout_height="match_parent"
                     android:visibility="invisible"/>-->
 
-                <TextView
-                    android:id="@+id/act_home__error_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:text="@string/error"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@android:color/holo_red_dark"
-                    android:visibility="gone"/>
-
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/act_home__error_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/act_home__btn_container"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/error"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@android:color/holo_red_dark"
+                android:visibility="gone"/>
 
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>

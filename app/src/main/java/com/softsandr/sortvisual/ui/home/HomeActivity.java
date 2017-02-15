@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,6 +27,9 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 public class HomeActivity extends BaseActivity implements HomeActivityPresenter.View {
 
     public static final int DEF_MAXIMUM_VAL = 1000;
@@ -34,8 +38,12 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
     HomeActivityPresenter presenter;
 
     private LinearLayout chart;
+    private TextView errorTv;
+    private Button stopBtn;
+
     private int chartPadding, chartBarMrg, chartBarWidth;
-    private Integer maxUserVal;
+    private Integer userMaxVal;
+    private Long userAnimFrequency;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +66,26 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
         chart = (LinearLayout) findViewById(R.id.act_home__chart);
         chartPadding = getResources().getDimensionPixelSize(R.dimen.act_home__frame_padding);
         chartBarMrg = getResources().getDimensionPixelSize(R.dimen.act_home__bar_margin_right);
+        errorTv = (TextView) findViewById(R.id.act_home__error_tv);
         final TextView inputTv = (TextView) findViewById(R.id.act_home__input);
         findViewById(R.id.act_home__start_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    maxUserVal = Integer.parseInt(((TextView) findViewById(R.id.act_home__max)).getText().toString());
+                    userMaxVal = Integer.parseInt(((TextView) findViewById(R.id.act_home__max)).getText().toString());
+                    userAnimFrequency = Long.parseLong(((TextView) findViewById(R.id.act_home__frequency)).getText().toString());
                 } catch (NumberFormatException ignored) {
                 }
-                presenter.startSort(inputTv.getText().toString().trim().split("\\s+"));
+                presenter.startSort(inputTv.getText().toString().trim().split("\\s+"), userAnimFrequency);
+                stopBtn.setEnabled(true);
             }
         });
-        findViewById(R.id.act_home__stop_btn).setOnClickListener(new View.OnClickListener() {
+        stopBtn = (Button) findViewById(R.id.act_home__stop_btn);
+        stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 presenter.stopSort();
+                v.setEnabled(false);
             }
         });
     }
@@ -97,6 +110,7 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
 
     @Override
     public void onSortStarted(int size) {
+        Timber.d("onSortStarted");
         hideSoftKeyboard(findViewById(R.id.act_home__input));
         initChart(size);
     }
@@ -112,20 +126,26 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
     public void onSortFinished(@NotNull int[] digits) {
         Timber.d("onSortFinished");
         Timber.d(Arrays.toString(digits));
+        stopBtn.setEnabled(false);
         fillChart(digits);
     }
 
     @Override
     public void onSortError(@Nullable Throwable th) {
+        Timber.d("onSortError: %s", th);
         chart.removeAllViews();
-        TextView errorTv = (TextView) findViewById(R.id.act_home__error_tv);
+        chart.setVisibility(GONE);
+        errorTv.setVisibility(VISIBLE);
+        stopBtn.setEnabled(false);
         if (th != null) {
-            errorTv.setText(getString(R.string.error_details, th.getCause()));
+            errorTv.setText(getString(R.string.error_details, th.getMessage()));
         }
     }
 
     private void initChart(int size) {
+        errorTv.setVisibility(GONE);
         chart.removeAllViews();
+        chart.setVisibility(VISIBLE);
         chartBarWidth = (chart.getMeasuredWidth() - chartPadding * 2 - chartBarMrg * (size - 1)) / size;
         LinearLayout.LayoutParams barInitialLp = new LinearLayout.LayoutParams(chartBarWidth, FrameLayout.LayoutParams.MATCH_PARENT);
         barInitialLp.gravity = Gravity.BOTTOM;
@@ -144,7 +164,7 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
         chart.removeAllViews();
         int chartHeight = chart.getMeasuredHeight();
         double heightMultiplier = 1f;
-        int maxValue = maxUserVal != null ? maxUserVal : DEF_MAXIMUM_VAL;
+        int maxValue = userMaxVal != null ? userMaxVal * 10 : DEF_MAXIMUM_VAL;
         if (maxValue > chartHeight) {
             heightMultiplier = new BigDecimal((double) maxValue / chartHeight).setScale(0, BigDecimal.ROUND_FLOOR).intValue();
         } else if (maxValue < chartHeight) {
@@ -153,8 +173,9 @@ public class HomeActivity extends BaseActivity implements HomeActivityPresenter.
         for (int i = 0; i < digits.length; i++) {
             View bar = new View(this);
             bar.setBackground(ContextCompat.getDrawable(this, R.drawable.initial_bar));
-            LinearLayout.LayoutParams barInitialLp = new LinearLayout.LayoutParams(chartBarWidth,
-                    (maxValue > chartHeight) ? (int) (digits[i] / heightMultiplier) : (int) (digits[i] * heightMultiplier));
+            int chartBarHeight = new BigDecimal((maxValue > chartHeight) ? (double) digits[i] / heightMultiplier : (double) digits[i] * heightMultiplier)
+                    .setScale(0, BigDecimal.ROUND_CEILING).intValue();
+            LinearLayout.LayoutParams barInitialLp = new LinearLayout.LayoutParams(chartBarWidth, chartBarHeight);
             barInitialLp.gravity = Gravity.BOTTOM;
             if (i != digits.length - 1) {
                 barInitialLp.rightMargin = chartBarMrg;

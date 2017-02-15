@@ -8,8 +8,7 @@ import java.util.concurrent.TimeUnit
  * @author Aleksander Drachuk (adrachuk@viewster.com)
  */
 
-class QuickSort {
-
+class QuickSort(val animationFrequency: Long?) {
     var step: Int = 0
 
     fun sort(array: IntArray?): Observable<IntArray> {
@@ -43,7 +42,7 @@ class QuickSort {
         }
 
         try {
-            TimeUnit.MILLISECONDS.sleep(ANIMATION_DURATION_MILLIS)
+            TimeUnit.MILLISECONDS.sleep(animationFrequency ?: ANIMATION_DURATION_MILLIS)
         } catch (e: InterruptedException) {
             if (!subscriber.isUnsubscribed) {
                 subscriber.onError(e)
