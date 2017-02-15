@@ -4,10 +4,6 @@ import rx.Observable
 import rx.Subscriber
 import java.util.concurrent.TimeUnit
 
-/**
- * @author Aleksander Drachuk (adrachuk@viewster.com)
- */
-
 class QuickSort(val animationFrequency: Long?) {
     var step: Int = 0
 
